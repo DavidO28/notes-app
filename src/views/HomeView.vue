@@ -1,8 +1,19 @@
 <template>
-  <main class="w-9/12 m-auto">
+  <main class="w-9/12 m-auto" :theme="theme">
+    <v-btn
+      :icon="
+        currentTheme === 'light' ? 'mdi-weather-sunny' : 'mdi-weather-night'
+      "
+      @click="toggleTheme"
+    />
     <header class="my-3 flex flex-row justify-between items-center">
       <h1 class="font-bold text-3xl">Notes</h1>
-      <v-btn @click="toggleModal" icon="mdi-plus" size="large" color="black" />
+      <v-btn
+        @click="toggleModal"
+        icon="mdi-plus"
+        size="large"
+        :color="currentTheme === 'light' ? 'black' : 'white'"
+      />
     </header>
     <v-dialog v-model="modal" width="1024px" opacity="0.8">
       <v-card>
@@ -67,6 +78,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+import { useTheme } from "vuetify";
 
 type Note = {
   id: number;
@@ -80,6 +92,14 @@ const savedNotes = ref<Note[]>([]);
 const errorState = ref<boolean>(false);
 const errorMessage = ref<string>("");
 const modal = ref<boolean>(false);
+const currentTheme = ref("light");
+
+const theme = useTheme();
+
+function toggleTheme() {
+  theme.global.name.value = theme.global.current.value.dark ? "light" : "dark";
+  currentTheme.value = currentTheme.value === "light" ? "dark" : "light";
+}
 
 const toggleModal = () => {
   modal.value = !modal.value;

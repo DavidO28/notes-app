@@ -13,9 +13,11 @@ import '@mdi/font/css/materialdesignicons.css'
 const app = createApp(App);
 const vuetify = createVuetify({
     components,
+    theme: {
+      defaultTheme: 'light'
+    }
   })
 
-// Use Vuetify and router in the Vue app instance
 app.use(vuetify);
 app.use(router);
 
