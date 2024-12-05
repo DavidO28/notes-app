@@ -3,13 +3,13 @@
     class="w-9/12 m-auto"
     :theme="theme"
   >
-    <v-btn
-      :icon="
-        currentTheme === 'light' ? 'mdi-weather-sunny' : 'mdi-weather-night'
-      "
-      @click="toggleTheme"
-    />
     <header class="my-3 flex flex-row justify-between items-center">
+      <v-btn
+        :icon="
+          currentTheme === 'light' ? 'mdi-weather-sunny' : 'mdi-weather-night'
+        "
+        @click="toggleTheme"
+      />
       <h1 class="font-bold text-3xl">Notes</h1>
       <v-btn
         @click="toggleModal"
@@ -67,29 +67,24 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <div>
-      <div
+    <v-container class="flex flex-wrap">
+      <v-card
         v-for="note in savedNotes"
         :key="note.id"
+        class="ma-2 pa-2"
         :style="{ backgroundColor: note.backgroundColor }"
       >
         <p class="text-lg">{{ note.text }}</p>
         <div class="mt-5 flex flex-row justify-between items-center text-sm">
           <p>{{ note.date }}</p>
-          <button class="text-end">
-            <v-icon icon="mdi-pencil" />
-          </button>
-          <button class="ml-3 text-end">
-            <v-icon icon="mdi-delete" />
-          </button>
         </div>
-      </div>
-    </div>
+      </v-card>
+    </v-container>
   </main>
 </template>
 
 <script setup lang="ts">
-  import { ref } from 'vue'
+  import { ref, onMounted } from 'vue'
   import { useTheme } from 'vuetify'
 
   type Note = {
@@ -99,7 +94,7 @@
     backgroundColor: string
   }
 
-  const newNote = ref<string>()
+  const newNote = ref<string>('')
   const savedNotes = ref<Note[]>([])
   const errorState = ref<boolean>(false)
   const errorMessage = ref<string>('')
@@ -108,9 +103,22 @@
 
   const theme = useTheme()
 
+  onMounted(() => {
+    const savedTheme = localStorage.getItem('theme')
+    if (savedTheme) {
+      currentTheme.value = savedTheme
+      theme.global.name.value = savedTheme
+    } else {
+      currentTheme.value = 'light'
+      theme.global.name.value = 'light'
+    }
+  })
+
   function toggleTheme() {
-    theme.global.name.value = theme.global.current.value.dark ? 'light' : 'dark'
-    currentTheme.value = currentTheme.value === 'light' ? 'dark' : 'light'
+    const newTheme = currentTheme.value === 'light' ? 'dark' : 'light'
+    theme.global.name.value = newTheme
+    currentTheme.value = newTheme
+    localStorage.setItem('theme', newTheme)
   }
 
   const toggleModal = () => {
@@ -140,5 +148,3 @@
     errorMessage.value = ''
   }
 </script>
-
-<style scoped></style>
