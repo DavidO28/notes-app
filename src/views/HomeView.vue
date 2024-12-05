@@ -1,5 +1,8 @@
 <template>
-  <main class="w-9/12 m-auto" :theme="theme">
+  <main
+    class="w-9/12 m-auto"
+    :theme="theme"
+  >
     <v-btn
       :icon="
         currentTheme === 'light' ? 'mdi-weather-sunny' : 'mdi-weather-night'
@@ -15,7 +18,11 @@
         :color="currentTheme === 'light' ? 'black' : 'white'"
       />
     </header>
-    <v-dialog v-model="modal" width="1024px" opacity="0.8">
+    <v-dialog
+      v-model="modal"
+      width="1024px"
+      opacity="0.8"
+    >
       <v-card>
         <v-snackbar
           v-model="errorState"
@@ -28,7 +35,11 @@
           </p>
 
           <template v-slot:actions>
-            <v-btn color="gray" variant="text" @click="errorState = false">
+            <v-btn
+              color="gray"
+              variant="text"
+              @click="errorState = false"
+            >
               Close
             </v-btn>
           </template>
@@ -59,6 +70,7 @@
     <div>
       <div
         v-for="note in savedNotes"
+        :key="note.id"
         :style="{ backgroundColor: note.backgroundColor }"
       >
         <p class="text-lg">{{ note.text }}</p>
@@ -77,56 +89,56 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { useTheme } from "vuetify";
+  import { ref } from 'vue'
+  import { useTheme } from 'vuetify'
 
-type Note = {
-  id: number;
-  text: string;
-  date: string;
-  backgroundColor: string;
-};
-
-const newNote = ref<any>();
-const savedNotes = ref<Note[]>([]);
-const errorState = ref<boolean>(false);
-const errorMessage = ref<string>("");
-const modal = ref<boolean>(false);
-const currentTheme = ref("light");
-
-const theme = useTheme();
-
-function toggleTheme() {
-  theme.global.name.value = theme.global.current.value.dark ? "light" : "dark";
-  currentTheme.value = currentTheme.value === "light" ? "dark" : "light";
-}
-
-const toggleModal = () => {
-  modal.value = !modal.value;
-  errorState.value = false;
-  newNote.value = "";
-  errorMessage.value = "";
-};
-
-const getRandomColor = () => {
-  const color = "hsl(" + Math.random() * 360 + ", 100%, 75%";
-  return color;
-};
-
-const addNote = () => {
-  if (newNote.value.length < 1) {
-    errorState.value = true;
-    return (errorMessage.value = "Empty text can't be added to notes");
+  type Note = {
+    id: number
+    text: string
+    date: string
+    backgroundColor: string
   }
-  savedNotes.value!.unshift({
-    id: Math.floor(Math.random() * 1000000),
-    text: newNote.value,
-    date: new Date().toLocaleDateString(),
-    backgroundColor: getRandomColor(),
-  });
-  toggleModal();
-  errorMessage.value = "";
-};
+
+  const newNote = ref<string>()
+  const savedNotes = ref<Note[]>([])
+  const errorState = ref<boolean>(false)
+  const errorMessage = ref<string>('')
+  const modal = ref<boolean>(false)
+  const currentTheme = ref('light')
+
+  const theme = useTheme()
+
+  function toggleTheme() {
+    theme.global.name.value = theme.global.current.value.dark ? 'light' : 'dark'
+    currentTheme.value = currentTheme.value === 'light' ? 'dark' : 'light'
+  }
+
+  const toggleModal = () => {
+    modal.value = !modal.value
+    errorState.value = false
+    newNote.value = ''
+    errorMessage.value = ''
+  }
+
+  const getRandomColor = () => {
+    const color = 'hsl(' + Math.random() * 360 + ', 100%, 75%'
+    return color
+  }
+
+  const addNote = () => {
+    if (newNote.value!.length < 1) {
+      errorState.value = true
+      return (errorMessage.value = "Empty text can't be added to notes")
+    }
+    savedNotes.value!.unshift({
+      id: Math.floor(Math.random() * 1000000),
+      text: newNote.value!,
+      date: new Date().toLocaleDateString(),
+      backgroundColor: getRandomColor(),
+    })
+    toggleModal()
+    errorMessage.value = ''
+  }
 </script>
 
 <style scoped></style>
